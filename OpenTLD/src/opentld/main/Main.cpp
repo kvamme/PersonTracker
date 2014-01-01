@@ -1,27 +1,27 @@
-/*  Copyright 2011 AIT Austrian Institute of Technology
+/* Copyright 2011 AIT Austrian Institute of Technology
 *
-*   This file is part of OpenTLD.
+* This file is part of OpenTLD.
 *
-*   OpenTLD is free software: you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*   (at your option) any later version.
+* OpenTLD is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
 *
-*   OpenTLD is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
+* OpenTLD is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
 *
-*   You should have received a copy of the GNU General Public License
-*   along with OpenTLD.  If not, see <http://www.gnu.org/licenses/>.
+* You should have received a copy of the GNU General Public License
+* along with OpenTLD. If not, see <http://www.gnu.org/licenses/>.
 *
 */
 /*
- * MainX.cpp
- *
- *  Created on: Nov 17, 2011
- *      Author: Georg Nebehay
- */
+* MainX.cpp
+*
+* Created on: Nov 17, 2011
+* Author: Georg Nebehay
+*/
 
 #include "Main.h"
 
@@ -36,7 +36,7 @@ using namespace cv;
 
 void Main::doWork()
 {
-	Trajectory trajectory;
+        Trajectory trajectory;
     IplImage *img = imAcqGetImg(imAcq);
     Mat grey(img->height, img->width, CV_8UC1);
     cvtColor(cvarrToMat(img), grey, CV_BGR2GRAY);
@@ -45,10 +45,10 @@ void Main::doWork()
     tld->detectorCascade->imgHeight = grey.rows;
     tld->detectorCascade->imgWidthStep = grey.step;
 
-	if(showTrajectory)
-	{
-		trajectory.init(trajectoryLength);
-	}
+        if(showTrajectory)
+        {
+                trajectory.init(trajectoryLength);
+        }
 
     if(selectManually)
     {
@@ -161,44 +161,44 @@ void Main::doWork()
             {
                 strcpy(learningString, "Learning");
             }
-	    char title[128];
+         char title[128];
             sprintf(string, "#%d,Posterior %.2f; fps: %.2f, #numwindows:%d, %s", imAcq->currentFrame - 1, tld->currConf, fps, tld->detectorCascade->numWindows, learningString);
-	    sprintf(title, "3DR Person Tracking   -   fps: %.2f, ", fps);
+         sprintf(title, "3DR Person Tracking - fps: %.2f, ", fps);
             CvScalar yellow = CV_RGB(255, 255, 0);
             CvScalar blue = CV_RGB(0, 0, 255);
             CvScalar black = CV_RGB(0, 0, 0);
             CvScalar white = CV_RGB(255, 255, 255);
-	    CvFont font;
+         CvFont font;
             cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, .5, .5, 0, 1, 8);
 
             if(tld->currBB != NULL)
             {
                 CvScalar rectangleColor = (confident) ? blue : black;
                 cvRectangle(img, tld->currBB->tl(), tld->currBB->br(), rectangleColor, 4, 8, 0);
-		//coord drawing
-		CvPoint posCenter = cvPoint(tld->currBB->x+tld->currBB->width/2, tld->currBB->y+tld->currBB->height/2);
-		sprintf(posString, "%d , %d", posCenter.x-15, posCenter.y+15);
-	    	cvPutText(img, posString, posCenter, &font, yellow);
-				if(showTrajectory)
-				{
-					CvPoint center = cvPoint(tld->currBB->x+tld->currBB->width/2, tld->currBB->y+tld->currBB->height/2);
-					cvLine(img, cvPoint(center.x-2, center.y-2), cvPoint(center.x+2, center.y+2), rectangleColor, 2);
-					cvLine(img, cvPoint(center.x-2, center.y+2), cvPoint(center.x+2, center.y-2), rectangleColor, 2);
-					trajectory.addPoint(center, rectangleColor);
-				}
+                //coord drawing
+                CvPoint posCenter = cvPoint(tld->currBB->x+tld->currBB->width/2-15, tld->currBB->y+tld->currBB->height/2+15);
+                sprintf(posString, "%d , %d", posCenter.x, posCenter.y);
+                 cvPutText(img, posString, posCenter, &font, yellow);
+                                if(showTrajectory)
+                                {
+                                        CvPoint center = cvPoint(tld->currBB->x+tld->currBB->width/2, tld->currBB->y+tld->currBB->height/2);
+                                        cvLine(img, cvPoint(center.x-2, center.y-2), cvPoint(center.x+2, center.y+2), rectangleColor, 2);
+                                        cvLine(img, cvPoint(center.x-2, center.y+2), cvPoint(center.x+2, center.y-2), rectangleColor, 2);
+                                        trajectory.addPoint(center, rectangleColor);
+                                }
             }
-			else if(showTrajectory)
-			{
-				trajectory.addPoint(cvPoint(-1, -1), cvScalar(-1, -1, -1));
-			}
+                        else if(showTrajectory)
+                        {
+                                trajectory.addPoint(cvPoint(-1, -1), cvScalar(-1, -1, -1));
+                        }
 
-			if(showTrajectory)
-			{
-				//trajectory.drawTrajectory(img);
-			}
-	    if(trajectory.compare()){
-		std::cout << "close" << std::endl;
-	    }
+                        if(showTrajectory)
+                        {
+                                //trajectory.drawTrajectory(img);
+                        }
+         if(trajectory.compare()){
+                std::cout << "close" << std::endl;
+         }
 
             cvRectangle(img, cvPoint(0, 0), cvPoint(img->width, 50), black, CV_FILLED, 8, 0);
             cvPutText(img, title, cvPoint(25, 25), &font, white);
